@@ -1,30 +1,33 @@
-name: Build Android APK
+name: Kivy Android Build
 on: [push]
+permissions:
+  contents: read
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
-        sudo apt update
-        sudo apt install -y openjdk-17-jdk unzip git
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-pip python3-venv openjdk-17-jdk unzip git
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
 
     - name: Install Buildozer
       run: pip install buildozer
 
-    - name: Build APK
-      run: buildozer android debug
+    - name: Build Android APK
+      run: |
+        buildozer init
+        buildozer android debug
 
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+    - name: Store APK
+      uses: actions/upload-artifact@v4
       with:
-        name: soundhunter-apk
+        name: android-apk
         path: bin/*.apk
