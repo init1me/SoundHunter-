@@ -5,26 +5,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.8'
 
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y openjdk-17-jdk unzip git
+        sudo apt install -y openjdk-17-jdk unzip git zlib1g-dev
 
     - name: Install Buildozer
       run: pip install buildozer
 
-    - name: Build APK
-      run: buildozer android debug
+    - name: Build APK with Buildozer
+      run: |
+        buildozer init
+        buildozer android debug
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: soundhunter-apk
         path: bin/*.apk
